@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { FontAwesome5 } from '@expo/vector-icons';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -29,15 +29,22 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Dashboard',
+          tabBarIcon: ({ color }) => <FontAwesome5 size={28} name="tachometer-alt" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="resources"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Resources',
+          tabBarIcon: ({ color }) => <FontAwesome5 size={28} name="file" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="services"
+        options={{
+          title: 'Services',
+          tabBarIcon: ({ color }) => <FontAwesome5 size={28} name="paper-plane" color={color} />,
         }}
       />
     </Tabs>

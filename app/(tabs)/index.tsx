@@ -1,74 +1,83 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, ScrollView } from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
+import Counter from '@/components/Counter';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const Index: React.FC = () => {
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [time, setTime] = useState<{ diffDays: number; diffMins: number; diffSecs: number }>({
+    diffDays: 0, diffMins: 0, diffSecs: 0,
+  })
 
-export default function HomeScreen() {
+  const cigsPerDay = 10; // Would be collected on sign up
+
+  const calculateTimeDifference = () => {
+    const now = new Date();
+    const diffMs = now.getTime() - startDate.getTime();
+    return {
+      diffDays: Math.floor(diffMs / (1000 * 60 * 60 * 24)),
+      diffMins: Math.floor(diffMs / (1000 * 60)) % 60,
+      diffSecs: Math.floor(diffMs / 1000) % 60,
+    };
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(calculateTimeDifference());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startDate]);
+
+  const calculateCigsAvoided = (days: number) => days * cigsPerDay;
+
+  const { diffDays, diffMins, diffSecs } = time;
+  const cigsAvoided = calculateCigsAvoided(diffDays);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
-}
+    <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <Image
+        source={require('../../assets/images/abl-a-better-life.png')}
+        className="mt-14 mb-4"
+        style={{
+          width: '50%',
+          height: undefined,
+          aspectRatio: 1.5,
+        }}
+        resizeMode="contain"
+      />
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+      <Text className="text-5xl font-bold text-lightBlue mt-6 text-center">
+        Hello, Eve
+      </Text>
+
+      <Text className="text-2xl text-blue mb-6 text-center">
+        Welcome to your Dashboard!
+      </Text>
+
+      <Counter
+      title="Smoke Free Counter"
+      value={`${diffDays} days, ${diffMins} minutes, ${diffSecs} seconds`}
+      onReset={() => setStartDate(new Date())}
+      isCircle={true}
+      />
+
+      <Counter
+      title="Cigarettes Avoided"
+      value={`${cigsAvoided} cigarettes`}
+      />
+
+      <View className='bg-blue w-full rounded-lg mt-6 p-5'>
+      <Text className="text-3xl font-bold text-white text-center">
+        Achievements
+      </Text>
+      
+      </View>
+      
+
+
+    </ScrollView>
+  );
+};
+
+export default Index;
